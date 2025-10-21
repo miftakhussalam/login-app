@@ -78,4 +78,17 @@ Pastikan Anda berada di root directory proyek sebelum menjalankan perintah ini:
 > yarn seed
 ```
 
-Proyek sekarang sudah terinstal dan terkonfigurasi. Anda dapat melanjutkan dengan perintah untuk menjalankan proyek (misalnya, yarn start di server dan client).
+Proyek sekarang sudah terinstal dan terkonfigurasi. Anda dapat melanjutkan dengan perintah untuk menjalankan proyek
+
+# Jalankan Aplikasi
+## client
+```
+> cd client
+> yarn dev
+```
+
+## server
+```
+> cd server
+> yarn dev
+```
