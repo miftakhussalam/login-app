@@ -1,0 +1,14 @@
+{
+  "name": "javis",
+  "version": "0.1.0",
+  "description": "login-app",
+  "main": "index.js",
+  "author": "mifta.salam <smiftakhus@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "seed": "cd server && sequelize db:create && sequelize db:migrate && sequelize db:seed:all",
+    "server-start": "cd server && nodemon ./bin/www",
+    "client-start": "cd client && vite",
+    "start": "concurrently \"npm run server-start\" \"npm run client-start\""
+  }
+}
