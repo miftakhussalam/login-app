@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
 axios.defaults.withCredentials = true;
 
 const DashboardPage = () => {
@@ -9,7 +10,7 @@ const DashboardPage = () => {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("token");
+      await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
       navigate("/login");
     } catch {
       navigate("/login");

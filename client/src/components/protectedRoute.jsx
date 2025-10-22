@@ -8,35 +8,29 @@ axios.defaults.withCredentials = true;
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const token = localStorage.getItem("token");
-  const parsedToken = token ? JSON.parse(token) : null;
 
   useEffect(() => {
-    const verifyToken = async () => {
+    const verifySession = async () => {
       try {
-        if (!parsedToken || !parsedToken.access_token) {
-          setIsAuthenticated(false);
-          setIsLoading(false);
-          return;
-        }
-        const body = {
-          access_token: parsedToken.access_token,
-        };
-        const response = await axios.post(`${API_URL}/users/verifyToken`, body);
+        const response = await axios.get(`${API_URL}/users/verifyToken`);
 
-        if (response.status === 200 && response.data.data.isAuthenticated) {
+        if (response.status === 200 && response.data?.data?.isAuthenticated) {
           setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
         }
       } catch (error) {
-        // Jika request gagal (misal: 401/403 dari middleware protect)
-        console.error("Verifikasi token gagal:", error.response.data.message);
+        console.error(
+          "verification session failed:",
+          error?.response?.data?.message || error.message
+        );
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
       }
     };
 
-    verifyToken();
+    verifySession();
   }, []);
 
   if (isLoading) {

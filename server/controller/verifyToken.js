@@ -1,22 +1,25 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateJWT = (req, res, next) => {
-  // Extract the token from the request
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies?.access_token;
 
-  if (!token) return res.sendStatus(401); // if there's no token
+  if (!token) {
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Access token missing. Please log in.',
+    });
+  }
 
-  return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.status(401).json({
-        status: 'error',
-        message: err.message,
-      });
-    }
+  try {
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = user;
-    return next();
-  });
+    next();
+  } catch (err) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'Invalid or expired token',
+    });
+  }
 };
 
 module.exports = {

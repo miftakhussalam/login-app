@@ -18,6 +18,7 @@ const {
   UpdatePassword,
   GetUserByUsername,
   UserVerifyToken,
+  UserLogout,
 } = require('../controller/user');
 const { authenticateJWT } = require('../controller/verifyToken');
 
@@ -25,7 +26,8 @@ const router = express.Router();
 
 router.post('/signup', UserSignup);
 router.post('/signin', loginLimiter, UserSignIn);
-router.post('/verifyToken', UserVerifyToken);
+router.post('/logout', UserLogout);
+router.get('/verifyToken', UserVerifyToken);
 router.get('/', authenticateJWT, GetAllUser);
 router.get('/username/:username', authenticateJWT, GetUserByUsername);
 router.put('/update', authenticateJWT, UpdateUser);

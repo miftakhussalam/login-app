@@ -92,9 +92,26 @@ const UserSignIn = async (req, res) => {
       });
     }
 
+    const { access_token, refreshToken } = userLogin.token;
+
+    res.cookie("access_token", access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
+    });
+
     return res.status(200).json({
-      data: userLogin,
-      message: 'Login successfull',
+      status: 'success',
+      message: 'Login successful',
+      data: userLogin.user,
     });
   } catch (error) {
 
@@ -105,15 +122,52 @@ const UserSignIn = async (req, res) => {
   }
 };
 
+const UserLogout = (req, res) => {
+  try {
+    // Hapus cookie access_token & refresh_token
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.clearCookie("refresh_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message: "Logout failed",
+    });
+  }
+};
+
 const UserVerifyToken = async (req, res) => {
-  const { access_token } = req.body;
+  const access_token = req.cookies.access_token;
+
+  if (!access_token) {
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Access token missing. Please log in.',
+    });
+  }
+
   try {
     const userLogin = await User.verifyToken(access_token);
     res.status(200).json({
       data: userLogin,
-      message: 'Login successfull',
+      message: 'Login successful',
     });
   } catch (error) {
+
+    console.log('xxxxx', error);
     return res.status(500).json({
       status: 'error',
       message: error.message,
@@ -340,6 +394,7 @@ const GetUserByUsername = async (req, res) => {
 module.exports = {
   UserSignup,
   UserSignIn,
+  UserLogout,
   UserVerifyToken,
   UpdateUser,
   UpdatePassword,

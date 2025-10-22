@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { LogIn, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -45,12 +45,12 @@ const App = () => {
     };
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/users/signin`,
         loginPayload,
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: false,
+          withCredentials: true,
         }
       );
 
@@ -59,7 +59,6 @@ const App = () => {
         text: "Login successful! Redirecting to dashboard...",
       });
 
-      localStorage.setItem("token", JSON.stringify(response?.data?.data?.token || ""));
       navigate("/");
     } catch (error) {
       if (error.response) {
