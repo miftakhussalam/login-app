@@ -1,48 +1,38 @@
-import React from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
-axios.defaults.withCredentials = true;
+import { User, DollarSign, ClipboardList } from "lucide-react";
+import ActivityFeed from "../components/ActivityFeed";
+import StatCard from "../components/StatCard";
 
 const DashboardPage = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
-      navigate("/login");
-    } catch {
-      navigate("/login");
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-10">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8 border-b pb-4">
-          <h1 className="text-4xl font-extrabold text-blue-700">
-            🎉 Dashboard Utama
-          </h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 shadow-md"
-          >
-            Keluar (Logout)
-          </button>
+    <div className="p-2 pb-18 md:pb-2 md:p-10">
+      <div className="space-y-8 p-4 md:p-0">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white transition-colors duration-500">
+          Analytics Dashboard
+        </h1>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatCard
+            title="Total Users"
+            value="2,456"
+            icon={<User className="w-7 h-7 text-sky-500" />}
+            colorClass="border-sky-500"
+          />
+          <StatCard
+            title="Revenue"
+            value="$125,890"
+            icon={<DollarSign className="w-7 h-7 text-green-500" />}
+            colorClass="border-green-500"
+          />
+          <StatCard
+            title="Open Tickets"
+            value="42"
+            icon={<ClipboardList className="w-7 h-7 text-amber-500" />}
+            colorClass="border-amber-500"
+          />
         </div>
-
-        {/* Konten Utama */}
-        <p className="text-xl text-gray-700 mb-6">
-          Anda berhasil masuk! Halaman ini adalah rute yang dilindungi.
-        </p>
-
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-          <p className="text-blue-700">
-            Akses ke halaman ini dimungkinkan karena **JWT** yang tersimpan di
-            *HttpOnly Cookie* Anda terverifikasi oleh *middleware* Express.
-          </p>
+        {/* Charts and Feeds */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <ActivityFeed />
         </div>
       </div>
     </div>
