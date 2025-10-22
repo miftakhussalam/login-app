@@ -116,11 +116,11 @@ const App = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4 font-sans antialiased">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100 transition-all duration-500 hover:shadow-3xl">
-        <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-8 flex items-center justify-center">
-          <LogIn className="w-8 h-8 mr-3 text-blue-600" />
-          Welcome Back
+    <div className="flex items-center justify-center min-h-screen dark:bg-gray-950 bg-gray-50 p-4 font-sans antialiased">
+      <div className="w-full max-w-md dark:bg-slate-900 dark:border-cyan-800 bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100 transition-all duration-500 hover:shadow-3xl">
+        <h2 className="text-4xl font-extrabold text-center dark:text-white text-gray-900 mb-8 flex items-center justify-center">
+          <LogIn className="w-8 h-8 mr-3 dark:text-white text-blue-600" />
+          Welcome to Javis
         </h2>
 
         <MessageDisplay type={message.type} text={message.text} />
@@ -129,13 +129,13 @@ const App = () => {
           {/* Email/Username Field */}
           <div className="mb-6">
             <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
+              className="block text-gray-700 dark:text-white text-sm font-semibold mb-2"
               htmlFor="identifier"
             >
               Email or Username
             </label>
             <input
-              className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 rounded-xl w-full py-4 px-5 text-gray-800 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200"
+              className="placeholder-gray-400  shadow-inner appearance-none border border-gray-300 dark:border-cyan-800 rounded-xl w-full py-4 px-5 text-gray-800 dark:text-gray-50 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 dark:focus:ring-slate-800 dark:focus:border-cyan-500 transition duration-200"
               id="identifier"
               type="text"
               placeholder="Enter your email or username"
@@ -148,13 +148,13 @@ const App = () => {
           {/* Password Field */}
           <div className="mb-8 relative">
             <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
+              className="block text-gray-700 dark:text-white text-sm font-semibold mb-2"
               htmlFor="password"
             >
               Password
             </label>
             <input
-              className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 rounded-xl w-full py-4 px-5 text-gray-800 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 pr-12 transition duration-200"
+              className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 dark:border-cyan-800 rounded-xl w-full py-4 px-5 text-gray-800 dark:text-gray-50 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 dark:focus:ring-slate-800 dark:focus:border-cyan-500 pr-12 transition duration-200"
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="input your password"
@@ -165,14 +165,14 @@ const App = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 top-7 flex items-center px-4 text-gray-500 hover:text-blue-600 transition duration-150 focus:outline-none"
+              className="absolute inset-y-0 right-0 top-7 flex items-center px-4 text-gray-500 dark:text-gray-200 hover:text-blue-600 transition duration-150 focus:outline-none"
               aria-label={showPassword ? "Hide password" : "Show password"}
               disabled={isLoading}
             >
               {showPassword ? (
-                <EyeOff className="w-5 h-5" />
+                <EyeOff className="w-5 h-5 hover:cursor-pointer" />
               ) : (
-                <Eye className="w-5 h-5" />
+                <Eye className="w-5 h-5 hover:cursor-pointer" />
               )}
             </button>
           </div>
@@ -180,10 +180,10 @@ const App = () => {
           {/* Login Button */}
           <div className="flex items-center justify-between">
             <button
-              className={`w-full text-white font-bold py-4 px-4 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 transform ${
+              className={`hover:cursor-pointer w-full text-white font-bold py-4 px-4 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 transform ${
                 isLoading
                   ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.01] shadow-lg shadow-blue-500/50"
+                  : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.03] shadow-lg"
               }`}
               type="submit"
               disabled={isLoading}
