@@ -166,3 +166,41 @@ This section explains the high‑level architecture and how data flows through t
 - server/app.js — Express setup and middleware configuration
 
 ---
+## Screenshots
+
+Below are a few screenshots for the app (click any thumbnail to open the full image).
+
+### Login
+<p align="center">
+  <a href="client/docs/assets/login.png">
+    <img src="client/docs/assets/login.png" alt="Login page" width="600" />
+  </a>
+  <br/>
+  <em>Login page</em>
+</p>
+
+### Dashboard (Desktop)
+<p align="center">
+  <a href="client/docs/assets/dashboard-dark.png">
+    <img src="client/docs/assets/dashboard-dark.png" alt="Dashboard - dark theme" width="420" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="client/docs/assets/dashboard-light.png">
+    <img src="client/docs/assets/dashboard-light.png" alt="Dashboard - light theme" width="420" />
+  </a>
+  <br/>
+  <em>Dashboard — dark (left) and light (right)</em>
+</p>
+
+### Dashboard (Mobile)
+<p align="center">
+  <a href="client/docs/assets/dashboard-mobile-dark.png">
+    <img src="client/docs/assets/dashboard-mobile-dark.png" alt="Dashboard mobile - dark" width="300" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="client/docs/assets/dashboard-mobile-light.png">
+    <img src="client/docs/assets/dashboard-mobile-light.png" alt="Dashboard mobile - light" width="300" />
+  </a>
+  <br/>
+  <em>Mobile — dark (left) and light (right)</em>
+</p>
