@@ -23,8 +23,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
   cors({
-    origin: process.env.FE_URL, // your frontend origin
+    origin: process.env.FE_URL,
     methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );

@@ -82,21 +82,38 @@ const UserSignup = async (req, res) => {
 };
 
 const UserSignIn = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { identifier, password } = req.body;
   try {
-    const userLogin = await User.authenticate({ username, email, password });
-    // console.log(userLogin);
+    const userLogin = await User.authenticate({ identifier, password });
+    if (!userLogin.user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: userLogin.message || 'Authentication failed',
+      });
+    }
+
+    return res.status(200).json({
+      data: userLogin,
+      message: 'Login successfull',
+    });
+  } catch (error) {
+
+    return res.status(500).json({
+      status: 'error',
+      message: error.message,
+    });
+  }
+};
+
+const UserVerifyToken = async (req, res) => {
+  const { access_token } = req.body;
+  try {
+    const userLogin = await User.verifyToken(access_token);
     res.status(200).json({
       data: userLogin,
       message: 'Login successfull',
     });
   } catch (error) {
-    if (error?.message === 'user not found' || error?.message === 'wrong password!') {
-      return res.status(404).json({
-        status: 'fail',
-        message: error.message,
-      });
-    }
     return res.status(500).json({
       status: 'error',
       message: error.message,
@@ -323,6 +340,7 @@ const GetUserByUsername = async (req, res) => {
 module.exports = {
   UserSignup,
   UserSignIn,
+  UserVerifyToken,
   UpdateUser,
   UpdatePassword,
   GetAllUser,

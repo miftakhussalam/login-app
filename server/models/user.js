@@ -38,33 +38,23 @@ module.exports = (sequelize, DataTypes) => {
 
     static authenticate = async (body) => {
       try {
-        const conditions = [];
 
-        if (body.username) {
-          conditions.push({ username: body.username });
-        }
-
-        if (body.email) {
-          conditions.push({ email: body.email });
-        }
-
-        if (conditions.length === 0) {
-          throw new Error('Username or email must be provided');
-        }
-
-        const user = await this.findOne({
+        const user = await User.findOne({
           where: {
-            [Op.or]: conditions
-          }
+            [Op.or]: [
+              { username: body?.identifier },
+              { email: body?.identifier }
+            ]
+          },
         });
 
         if (!user) {
-          return Promise.reject(new Error('user not found!'));
+          return Promise.resolve({ message: 'user not found' });
         }
-
+        
         const isPasswordValid = user.checkPassword(body.password);
         if (!isPasswordValid) {
-          return Promise.reject(new Error('Wrong password'));
+          return Promise.resolve({ message: 'wrong password!' });
         }
 
         const token = await user.generateToken();
@@ -99,6 +89,32 @@ module.exports = (sequelize, DataTypes) => {
         const token = await user.generateToken();
 
         return Promise.resolve({ user, token });
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    };
+
+    static verifyToken = async (access_token) => {
+      try {
+        const decodedAccessToken = jwt
+          .verify(access_token, process.env.ACCESS_TOKEN_SECRET);
+
+        const user = await this.findOne({
+          where: {
+            username: decodedAccessToken.username,
+          },
+        });
+
+        if (!user) {
+          return Promise.reject(new Error('user not found!'));
+        }
+
+        const isPasswordValid = decodedAccessToken.password === user.password;
+        if (!isPasswordValid) {
+          return Promise.reject(new Error('Wrong password'));
+        }
+
+        return Promise.resolve({ user, isAuthenticated: true });
       } catch (err) {
         return Promise.reject(err);
       }
