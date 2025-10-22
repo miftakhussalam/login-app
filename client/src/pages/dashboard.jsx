@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// Konfigurasi axios agar mengirim cookie (penting!)
 axios.defaults.withCredentials = true;
 
 const DashboardPage = () => {
@@ -10,14 +9,9 @@ const DashboardPage = () => {
 
   const handleLogout = async () => {
     try {
-      // Panggil endpoint logout di backend
-      await axios.post("/api/logout");
-
-      // Redirect ke halaman login setelah logout sukses
+      localStorage.removeItem("token");
       navigate("/login");
-    } catch (error) {
-      console.error("Logout gagal:", error);
-      // Tetap paksa redirect meskipun ada error (biasanya error karena cookie sudah hilang duluan)
+    } catch {
       navigate("/login");
     }
   };

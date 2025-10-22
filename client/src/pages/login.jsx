@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { LogIn, Eye, EyeOff, AlertTriangle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
 
 const App = () => {
   const [identifier, setIdentifier] = useState("");
@@ -8,12 +10,9 @@ const App = () => {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const SIGNIN_URL = "http://localhost:8080/users/signin";
-
-  // ✅ Updated validation: only checks that both fields are filled
   const validateForm = () => {
-    // 1. Required fields check
     if (!identifier || !password) {
       setMessage({
         type: "error",
@@ -22,7 +21,6 @@ const App = () => {
       return false;
     }
 
-    // 2. Optional: Only check email format *if* input contains '@'
     if (identifier.includes("@")) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(identifier)) {
@@ -31,7 +29,7 @@ const App = () => {
       }
     }
 
-    setMessage({ type: "", text: "" }); // Clear message on success
+    setMessage({ type: "", text: "" });
     return true;
   };
   const handleSubmit = async (e) => {
@@ -41,33 +39,29 @@ const App = () => {
     setIsLoading(true);
     setMessage({ type: "", text: "" });
 
-    // ✅ Payload supports either email or username
     const loginPayload = {
       identifier,
       password,
     };
 
-    console.log("Attempting login to:", SIGNIN_URL, loginPayload);
-
     try {
-      const response = await axios.post(SIGNIN_URL, loginPayload, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: false,
-      });
-
-      console.log("Authentication successful:", response.data);
+      const response = await axios.post(
+        `${API_URL}/users/signin`,
+        loginPayload,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: false,
+        }
+      );
 
       setMessage({
         type: "success",
         text: "Login successful! Redirecting to dashboard...",
       });
 
-      // Example: store token or navigate
-      // localStorage.setItem('authToken', response.data.token);
-      // navigate('/dashboard');
+      localStorage.setItem("token", JSON.stringify(response?.data?.data?.token || ""));
+      navigate("/");
     } catch (error) {
-      console.error("Login error:", error);
-
       if (error.response) {
         if (error.response.status === 401 || error.response.status === 403) {
           setMessage({
@@ -85,7 +79,7 @@ const App = () => {
       } else if (error.request) {
         setMessage({
           type: "error",
-          text: `No response from server at ${SIGNIN_URL}. Check if it's running or blocked by CORS.`,
+          text: `No response from server at ${API_URL}. Check if it's running or blocked by CORS.`,
         });
       } else {
         setMessage({
@@ -141,7 +135,7 @@ const App = () => {
               Email or Username
             </label>
             <input
-              className="shadow-inner appearance-none border border-gray-300 rounded-xl w-full py-4 px-5 text-gray-800 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200"
+              className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 rounded-xl w-full py-4 px-5 text-gray-800 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200"
               id="identifier"
               type="text"
               placeholder="Enter your email or username"
@@ -160,10 +154,10 @@ const App = () => {
               Password
             </label>
             <input
-              className="shadow-inner appearance-none border border-gray-300 rounded-xl w-full py-4 px-5 text-gray-800 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 pr-12 transition duration-200"
+              className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 rounded-xl w-full py-4 px-5 text-gray-800 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 pr-12 transition duration-200"
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
+              placeholder="input your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
