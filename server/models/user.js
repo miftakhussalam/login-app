@@ -114,7 +114,8 @@ module.exports = (sequelize, DataTypes) => {
           return Promise.reject(new Error('Wrong password'));
         }
 
-        return Promise.resolve({ user, isAuthenticated: true });
+        const { password, ...userWithoutPassword } = user.dataValues;
+        return Promise.resolve({ user: userWithoutPassword, isAuthenticated: true });
       } catch (err) {
         return Promise.reject(err);
       }

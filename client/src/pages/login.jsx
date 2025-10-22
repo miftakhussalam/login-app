@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { LogIn, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+import { AuthContext } from "../context/AuthProvider";
 
-const App = () => {
+const LoginPage = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -12,11 +11,19 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const { login, user } = useContext(AuthContext);
+
+  console.log('login', user);
+
+  useEffect(() => {
+    if (user) navigate("/");
+  }, [user, navigate]);
+
   const validateForm = () => {
     if (!identifier || !password) {
       setMessage({
         type: "error",
-        text: "Email/Username dan Password wajib diisi.",
+        text: "Email/Username and Password are required.",
       });
       return false;
     }
@@ -24,7 +31,7 @@ const App = () => {
     if (identifier.includes("@")) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(identifier)) {
-        setMessage({ type: "error", text: "Format email tidak valid." });
+        setMessage({ type: "error",  text: "Invalid email format." });
         return false;
       }
     }
@@ -32,6 +39,7 @@ const App = () => {
     setMessage({ type: "", text: "" });
     return true;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -39,53 +47,20 @@ const App = () => {
     setIsLoading(true);
     setMessage({ type: "", text: "" });
 
-    const loginPayload = {
-      identifier,
-      password,
-    };
-
     try {
-      await axios.post(
-        `${API_URL}/users/signin`,
-        loginPayload,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-
+      await login(identifier, password);
       setMessage({
         type: "success",
         text: "Login successful! Redirecting to dashboard...",
       });
-
-      navigate("/");
+      setTimeout(() => navigate("/"), 1000);
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401 || error.response.status === 403) {
-          setMessage({
-            type: "error",
-            text: "Invalid username/email or password.",
-          });
-        } else {
-          setMessage({
-            type: "error",
-            text: `Server error (${error.response.status}): ${
-              error.response.data?.message || "Please try again later."
-            }`,
-          });
-        }
-      } else if (error.request) {
-        setMessage({
-          type: "error",
-          text: `No response from server at ${API_URL}. Check if it's running or blocked by CORS.`,
-        });
-      } else {
-        setMessage({
-          type: "error",
-          text: "Unexpected error while setting up request.",
-        });
-      }
+      setMessage({
+        type: "error",
+        text:
+          error.response?.data?.message ||
+          "Invalid username/email or password.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +83,7 @@ const App = () => {
 
     return (
       <div className={`${baseClasses} ${styleClasses}`} role="alert">
-        {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
+        {Icon && <Icon className="w-5 h-5 mr-3" />}
         <span>{text}</span>
       </div>
     );
@@ -117,9 +92,9 @@ const App = () => {
   return (
     <div className="flex items-center justify-center min-h-screen dark:bg-gray-950 bg-gray-50 p-4 font-sans antialiased">
       <div className="w-full max-w-md dark:bg-slate-900 dark:border-cyan-800 bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100 transition-all duration-500 hover:shadow-3xl">
-        <h2 className="text-4xl font-extrabold text-center dark:text-white text-gray-900 mb-8 flex items-center justify-center">
-          <LogIn className="w-8 h-8 mr-3 dark:text-white text-blue-600" />
-          Welcome to Javis
+        <h2 className="text-3xl font-extrabold text-center dark:text-white text-sky-900 mb-8 flex items-center justify-center">
+          {/* <LogIn className="w-8 h-8 mr-3 dark:text-white text-blue-600" /> */}
+          Welcome Back!
         </h2>
 
         <MessageDisplay type={message.type} text={message.text} />
@@ -134,7 +109,7 @@ const App = () => {
               Email or Username
             </label>
             <input
-              className="placeholder-gray-400  shadow-inner appearance-none border border-gray-300 dark:border-cyan-800 rounded-xl w-full py-4 px-5 text-gray-800 dark:text-gray-50 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 dark:focus:ring-slate-800 dark:focus:border-cyan-500 transition duration-200"
+              className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 dark:border-cyan-800 rounded-xl w-full py-4 px-5 text-gray-800 dark:text-gray-50 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 dark:focus:ring-slate-800 dark:focus:border-cyan-500 transition duration-200"
               id="identifier"
               type="text"
               placeholder="Enter your email or username"
@@ -156,7 +131,7 @@ const App = () => {
               className="placeholder-gray-400 shadow-inner appearance-none border border-gray-300 dark:border-cyan-800 rounded-xl w-full py-4 px-5 text-gray-800 dark:text-gray-50 leading-tight focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 dark:focus:ring-slate-800 dark:focus:border-cyan-500 pr-12 transition duration-200"
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="input your password"
+              placeholder="Input your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
@@ -222,4 +197,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default LoginPage;

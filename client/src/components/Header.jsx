@@ -1,39 +1,26 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+import { AuthContext } from "../context/AuthProvider";
 
 const AppHeader = ({ toggleTheme, isDarkMode, Icon }) => {
   // Mock user authentication state
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [username, setUsername] = useState("JohnDoe");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { logout, user } = useContext(AuthContext);
 
-
-  const firstInitial = username ? username.charAt(0).toUpperCase() : "";
+  const firstInitial = user ? user.username.charAt(0).toUpperCase() : "";
 
   const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${API_URL}/users/logout`,
-        {},
-        { withCredentials: true }
-      );
-      setIsMenuOpen(false);
-      setIsLoggedIn(false);
-      navigate("/login");
-    } catch {
-      navigate("/login");
-    }
+    setIsMenuOpen(false);
+    await logout(navigate);
   };
 
   // Function to mock login for demonstration purposes
   const handleLogin = () => {
     setIsLoggedIn(true);
-    setUsername("JaneSmith"); // Switch user on mock login
   };
 
   return (
@@ -74,7 +61,7 @@ const AppHeader = ({ toggleTheme, isDarkMode, Icon }) => {
                   <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-slate-600">
                     Signed in as{" "}
                     <span className="font-semibold block truncate">
-                      {username}
+                      {user?.username}
                     </span>
                   </div>
                   <button
